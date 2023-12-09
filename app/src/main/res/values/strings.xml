@@ -1,0 +1,13 @@
+<resources>
+<!--  App Title  -->
+    <string name="app_name">GitUsers</string>
+
+<!--  Fragment titles  -->
+    <string name="user_details">User details</string>
+    <string name="git_users">GitHub users</string>
+
+<!--  menu titles   -->
+    <string name="follow">follow</string>
+    <string name="filter_title"></string>
+
+</resources>

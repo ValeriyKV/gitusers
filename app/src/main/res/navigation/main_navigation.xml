@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/usersFragment">
+
+    <fragment
+        android:id="@+id/usersFragment"
+        android:name="com.example.gitusers.fragments.users.UsersFragment"
+        tools:layout="@layout/fragment_users"
+        android:label="UsersFragment" >
+        <action
+            android:id="@+id/action_usersFragment_to_userFragment"
+            app:destination="@id/userFragment">
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="com.example.gitusers.fragments.UserFragment"
+        android:label="UserFragment" >
+    </fragment>
+</navigation>
