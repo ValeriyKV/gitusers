@@ -17,35 +17,42 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gitApp.data.User
 import com.example.gitusers.R
 import com.example.gitusers.UsersCallback
+import com.example.gitusers.databinding.FragmentUsersBinding
 import com.example.gitusers.db.Database
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class UsersFragment : Fragment(), UsersCallback, Toolbar.OnMenuItemClickListener{
+class UsersFragment : Fragment(), UsersCallback{
 
     private lateinit var viewModel: UsersViewModel
 
     private lateinit var usersAdapter : UsersAdapter
-    private lateinit var menuItem: ActionMenuItemView
+
+    private var _binding: FragmentUsersBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_users, container, false)
+        _binding = FragmentUsersBinding.inflate(inflater, container,false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, UsersViewModel.Factory(Database.createDatabase()))[UsersViewModel::class.java]
-        val recyclerView :RecyclerView = view.findViewById(R.id.listView)
-        usersAdapter = UsersAdapter(LayoutInflater.from(view.context))
-        recyclerView.layoutManager = LinearLayoutManager(view.context)
-        recyclerView.adapter = usersAdapter
+        usersAdapter = UsersAdapter()
         usersAdapter.callbackListener = this@UsersFragment
-        view.findViewById<Toolbar>(R.id.toolbar).setOnMenuItemClickListener(this)
-        menuItem = view.findViewById(R.id.filter)
+        binding.listView.run {
+            layoutManager = LinearLayoutManager(view.context)
+            adapter = usersAdapter
+        }
+        binding.toolbar.menu.findItem(R.id.filter).setOnMenuItemClickListener {
+            viewModel.changeFilter()
+            return@setOnMenuItemClickListener true
+        }
         bindObservers()
     }
 
@@ -73,12 +80,5 @@ class UsersFragment : Fragment(), UsersCallback, Toolbar.OnMenuItemClickListener
 
     override fun onUserFollowChange(user: User) {
         viewModel.updateFollowings(user)
-    }
-
-    override fun onMenuItemClick(item: MenuItem?): Boolean {
-        if(item?.itemId?.equals(R.id.filter) == true){
-            viewModel.changeFilter()
-        }
-        return true
     }
 }

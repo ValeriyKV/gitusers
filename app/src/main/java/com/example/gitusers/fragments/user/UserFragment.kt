@@ -15,6 +15,7 @@ import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.example.gitApp.data.User
 import com.example.gitusers.R
+import com.example.gitusers.databinding.FragmentUserBinding
 import com.example.gitusers.db.Database
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -23,30 +24,22 @@ import kotlinx.coroutines.launch
 class UserFragment : Fragment() {
 
     private lateinit var viewModel: UserViewModel
-    
-    private lateinit var mImageView : ImageView
-    private lateinit var mName : TextView
-    private lateinit var mLocation : TextView
-    private lateinit var mNickName : TextView
-    private lateinit var mToolbar: Toolbar
-    
-    
+
+    private var _binding: FragmentUserBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_user, container, false)
+        _binding = FragmentUserBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mImageView = view.findViewById(R.id.image)
-        mName = view.findViewById(R.id.name)
-        mNickName = view.findViewById(R.id.nickname)
-        mLocation = view.findViewById(R.id.place)
-        mToolbar = view.findViewById(R.id.toolbar)
-        mToolbar.setNavigationOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.setNavigationOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
         var arguments = arguments
         var user:User? = null
         if(arguments != null && arguments.containsKey("user")){
@@ -57,7 +50,7 @@ class UserFragment : Fragment() {
             Navigation.findNavController(view).navigateUp()
         }
         viewModel = ViewModelProvider(this, UserViewModel.Factory(Database.createDatabase(), user!!))[UserViewModel::class.java]
-        mToolbar.setOnMenuItemClickListener{
+        binding.toolbar.setOnMenuItemClickListener{
             viewModel.run {
                 viewModel.updateFollowings()
             }
@@ -77,14 +70,14 @@ class UserFragment : Fragment() {
     }
 
     private fun fillData(user: User) {
-        Glide.with(this).asBitmap().load(user.avatarUrl).into(mImageView)
-        mName.text = user.name
-        mLocation.text = user.location
-        mNickName.text = user.location
+        Glide.with(this).asBitmap().load(user.avatarUrl).into(binding.image)
+        binding.name.text = user.name
+        binding.place.text = user.location
+        binding.nickname.text = user.login
         if (user.follow){
-            mToolbar.menu.findItem(R.id.following).setIcon(R.drawable.baseline_star_24)
+            binding.toolbar.menu.findItem(R.id.following).setIcon(R.drawable.baseline_star_24)
         } else {
-            mToolbar.menu.findItem(R.id.following).setIcon(R.drawable.baseline_star_border_24)
+            binding.toolbar.menu.findItem(R.id.following).setIcon(R.drawable.baseline_star_border_24)
         }
     }
 }
