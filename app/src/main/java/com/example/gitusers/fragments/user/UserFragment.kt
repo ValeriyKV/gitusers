@@ -1,8 +1,7 @@
-package com.example.gitusers.fragments
+package com.example.gitusers.fragments.user
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -12,11 +11,9 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.example.gitApp.data.User
-import com.example.gitusers.MainViewModel
 import com.example.gitusers.R
 import com.example.gitusers.db.Database
 import kotlinx.coroutines.launch
@@ -24,7 +21,7 @@ import kotlinx.coroutines.launch
 
 class UserFragment : Fragment() {
 
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: UserViewModel
     
     private lateinit var mImageView : ImageView
     private lateinit var mName : TextView
@@ -43,7 +40,6 @@ class UserFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, MainViewModel.Factory(Database.createDatabase()))[MainViewModel::class.java]
         mImageView = view.findViewById(R.id.image)
         mName = view.findViewById(R.id.name)
         mNickName = view.findViewById(R.id.nickname)
@@ -59,20 +55,16 @@ class UserFragment : Fragment() {
         } else {
             Navigation.findNavController(view).navigateUp()
         }
+        viewModel = ViewModelProvider(this, UserViewModel.Factory(Database.createDatabase(), user!!))[UserViewModel::class.java]
         mToolbar.setOnMenuItemClickListener{
             viewModel.run {
-                updateFollowings(user = user!!)
+                viewModel.updateFollowings()
             }
             return@setOnMenuItemClickListener true
         }
         lifecycle.coroutineScope.launch {
-            viewModel.modelFlowUsers.collect{
-                for (userTmp in it){
-                    if(userTmp.id!! == user!!.id) {
-                        user.follow = userTmp.follow
-                        fillData(user)
-                    }
-                }
+            viewModel.modelFlowUser.collect{
+                fillData(it)
             }
         }
         val callback: OnBackPressedCallback =

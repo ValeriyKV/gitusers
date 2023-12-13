@@ -1,4 +1,4 @@
-package com.example.gitusers
+package com.example.gitusers.fragments.users
 
 import com.example.gitApp.data.User
 import com.example.gitusers.db.entity.Followings
@@ -6,7 +6,7 @@ import com.example.gitusers.utilities.AdapterUtils
 import com.example.gitusers.utilities.ListItem
 import java.util.LinkedList
 
-class MainModel{
+class UsersModel {
 
     var mFollowings: List<Followings> = LinkedList()
         set(value) {
@@ -53,6 +53,5 @@ class MainModel{
             }
         return find
     }
-
 
 }

@@ -19,4 +19,7 @@ interface FollowingsDoa {
 
     @Query("select * from Followings")
     fun getAll(): Flow<List<Followings>>
+
+    @Query("select * from Followings where id=:userId limit 1")
+    fun getFollowingByUserId(userId : Int) : Flow<Followings>
 }

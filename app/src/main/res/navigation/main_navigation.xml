@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/userFragment"
-        android:name="com.example.gitusers.fragments.UserFragment"
+        android:name="com.example.gitusers.fragments.user.UserFragment"
         android:label="UserFragment" >
     </fragment>
 </navigation>

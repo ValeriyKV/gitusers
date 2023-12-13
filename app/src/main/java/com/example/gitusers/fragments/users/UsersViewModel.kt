@@ -1,7 +1,6 @@
-package com.example.gitusers
+package com.example.gitusers.fragments.users
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -12,37 +11,25 @@ import com.example.gitusers.db.Database
 import com.example.gitusers.db.dao.FollowingsDoa
 import com.example.gitusers.db.entity.Followings
 import com.example.gitusers.utilities.ListItem
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.LinkedList
 import java.util.concurrent.Executors
 
-class MainViewModel(database: Database) : ViewModel(){
+class UsersViewModel(database: Database) : ViewModel() {
 
-    private var mModel : MainModel = MainModel()
-    private var mUser : User = User()
-    private var mFollowingsDoa:FollowingsDoa
+    private var mModel : UsersModel = UsersModel()
+    private var mFollowingsDoa: FollowingsDoa
 
     var mutableStateFlow = MutableStateFlow(mModel.showList)
     val modelFlow : StateFlow<List<ListItem>> = mutableStateFlow.stateIn(viewModelScope, SharingStarted.Eagerly, mModel.showList)
-
-    var mutableStateFlowUsers = MutableStateFlow(mModel.list)
-    val modelFlowUsers : StateFlow<List<User>> = mutableStateFlowUsers.stateIn(viewModelScope, SharingStarted.Eagerly, mModel.list)
-
-    var mutableStateFlowUser = MutableStateFlow(mUser)
-    val modelFlowUser : StateFlow<User> = mutableStateFlowUser.stateIn(viewModelScope, SharingStarted.Eagerly, mUser)
-
 
     init {
         mFollowingsDoa = database.followingsDoa()
@@ -71,35 +58,8 @@ class MainViewModel(database: Database) : ViewModel(){
             mFollowingsDoa.getAll().collectLatest {
                 mModel.mFollowings = it
                 mModel.showList = LinkedList(mModel.showList)
-                viewModelScope.launch {
-                    mutableStateFlowUsers.emit(mModel.list)
-                }
             }
         }
-    }
-
-    fun getFullInformation(user: User) {
-        val userAPI = APIClient.getClient().create(UserAPI::class.java)
-        val userCall = user.url?.let { userAPI.getUserInfo(it) }
-        val function = object : Callback<User> {
-            override fun onResponse(call: Call<User>, response: Response<User>) {
-                if (response.isSuccessful){
-                    val body = response.body()
-                    if(body != null){
-                        mUser = body
-                        mUser.follow = mModel.isFollow(mUser)
-                        viewModelScope.launch {
-                            mutableStateFlowUser.emit(mUser)
-                        }
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<User>, t: Throwable) {
-
-            }
-        }
-        userCall?.enqueue(function)
     }
 
     fun changeFilter(){

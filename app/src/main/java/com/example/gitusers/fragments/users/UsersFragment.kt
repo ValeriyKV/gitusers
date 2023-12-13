@@ -15,17 +15,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gitApp.data.User
-import com.example.gitusers.MainViewModel
 import com.example.gitusers.R
 import com.example.gitusers.UsersCallback
 import com.example.gitusers.db.Database
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class UsersFragment : Fragment(), UsersCallback, Toolbar.OnMenuItemClickListener{
 
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: UsersViewModel
 
     private lateinit var usersAdapter : UsersAdapter
     private lateinit var menuItem: ActionMenuItemView
@@ -40,7 +38,7 @@ class UsersFragment : Fragment(), UsersCallback, Toolbar.OnMenuItemClickListener
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, MainViewModel.Factory(Database.createDatabase()))[MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, UsersViewModel.Factory(Database.createDatabase()))[UsersViewModel::class.java]
         val recyclerView :RecyclerView = view.findViewById(R.id.listView)
         usersAdapter = UsersAdapter(LayoutInflater.from(view.context))
         recyclerView.layoutManager = LinearLayoutManager(view.context)
@@ -58,27 +56,19 @@ class UsersFragment : Fragment(), UsersCallback, Toolbar.OnMenuItemClickListener
                 usersAdapter.setData(it)
             }
         }
-        lifecycleScope.launch{
-            viewModel.modelFlowUser.collect {
-                if (!it.isEmpty()) {
-                    val currentDestination = findNavController().currentDestination
-                    val action =
-                        currentDestination?.getAction(R.id.action_usersFragment_to_userFragment)
-                    if (action != null) {
-                        val bundle = bundleOf("user" to it)
-                        findNavController().navigate(
-                            R.id.action_usersFragment_to_userFragment,
-                            bundle
-                        )
-                        viewModel.mutableStateFlowUser.update { User() }
-                    }
-                }
-            }
-        }
     }
 
     override fun onUserClick(user: User) {
-        viewModel.getFullInformation(user)
+        val currentDestination = findNavController().currentDestination
+        val action =
+            currentDestination?.getAction(R.id.action_usersFragment_to_userFragment)
+        if (action != null) {
+            val bundle = bundleOf("user" to user)
+            findNavController().navigate(
+                R.id.action_usersFragment_to_userFragment,
+                bundle
+            )
+        }
     }
 
     override fun onUserFollowChange(user: User) {
