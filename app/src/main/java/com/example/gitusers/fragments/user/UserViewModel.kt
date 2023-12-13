@@ -1,5 +1,6 @@
 package com.example.gitusers.fragments.user
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -22,8 +23,7 @@ import java.util.concurrent.Executors
 class UserViewModel(database: Database, user : User) : ViewModel() {
 
     var userModel : UserModel = UserModel()
-    var mutableStateFlowUser = MutableStateFlow(userModel.user)
-    val modelFlowUser : StateFlow<User> = mutableStateFlowUser.stateIn(viewModelScope, SharingStarted.Eagerly, userModel.user)
+    var mutableLiveData : MutableLiveData<User> = MutableLiveData()
     private var mFollowingsDoa: FollowingsDoa
 
     init {
@@ -32,7 +32,7 @@ class UserViewModel(database: Database, user : User) : ViewModel() {
         viewModelScope.launch {
             user.id?.let { mFollowingsDoa.getFollowingByUserId(userId = it).collect{
                 userModel.updateFollowing(if(it==null) Followings(null, user.id,  follow = false) else it)
-                mutableStateFlowUser.emit(userModel.user)
+                mutableLiveData.postValue(userModel.user)
             } }
         }
         getFullInformation(user)
@@ -48,7 +48,7 @@ class UserViewModel(database: Database, user : User) : ViewModel() {
                     if(body != null){
                         userModel.user  =body
                         viewModelScope.launch {
-                            mutableStateFlowUser.emit(userModel.user)
+                            mutableLiveData.postValue(userModel.user)
                         }
                     }
                 }

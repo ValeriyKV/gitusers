@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide
 import com.example.gitApp.data.User
 import com.example.gitusers.R
 import com.example.gitusers.db.Database
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
@@ -62,10 +63,8 @@ class UserFragment : Fragment() {
             }
             return@setOnMenuItemClickListener true
         }
-        lifecycle.coroutineScope.launch {
-            viewModel.modelFlowUser.collect{
-                fillData(it)
-            }
+        viewModel.mutableLiveData.observe(viewLifecycleOwner) {
+            fillData(it)
         }
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true ) {
