@@ -2,27 +2,22 @@ package com.example.gitusers.fragments.users
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.view.menu.ActionMenuItemView
-import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.gitApp.data.User
 import com.example.gitusers.R
-import com.example.gitusers.UsersCallback
 import com.example.gitusers.databinding.FragmentUsersBinding
 import com.example.gitusers.db.Database
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class UsersFragment : Fragment(), UsersCallback{
+class UsersFragment : Fragment(), UsersCallback {
 
     private lateinit var viewModel: UsersViewModel
 

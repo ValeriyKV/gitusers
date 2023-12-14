@@ -1,4 +1,4 @@
-package com.example.gitusers
+package com.example.gitusers.fragments.users
 
 import com.example.gitApp.data.User
 

@@ -1,16 +1,9 @@
 package com.example.gitusers.fragments.users
 
-import android.os.Binder
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.gitApp.data.User
-import com.example.gitusers.R
-import com.example.gitusers.UsersCallback
 import com.example.gitusers.databinding.HeaderItemRowBinding
 import com.example.gitusers.databinding.UserItemRowBinding
 import com.example.gitusers.utilities.ListItem
